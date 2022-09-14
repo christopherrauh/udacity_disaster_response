@@ -35,6 +35,16 @@ natural_disaster_categories = ['weather_related', 'floods', 'storm', 'fire', 'ea
 app = Flask(__name__)
 
 def tokenize(text):
+    '''
+    Tokenizes a given text incl. lemmatizing and transforming to lower case
+
+    Inputs:
+    text - to be tokenized
+
+    Returns:
+    clean_tokens: corresponding tokens
+
+    '''
     tokens = word_tokenize(text)
     lemmatizer = WordNetLemmatizer()
 
@@ -47,6 +57,17 @@ def tokenize(text):
 
 
 def no_subset(df, cluster):
+    '''
+    calculates the number of rows of a given subset of a Pandas data frame, where binary values are actually set to 1 
+
+    Inputs:
+    df: Pandas dataframe to consider
+    cluster: list of column names constituting a logical cluster
+
+    Returns:
+    number_of_rows: the amount of rows where the given cluster of attributes has binary values set to 1
+
+    '''
     temp_df = df[cluster]     
     number_of_rows = len(temp_df[temp_df.isin([1]).any(axis=1)])
 
@@ -65,6 +86,10 @@ model = joblib.load("./models/classifier.pkl")
 @app.route('/')
 @app.route('/index')
 def index():
+    '''
+    this function is called to render the front page of the web application
+    specifically 3 metrics are calculated and passed on to the flask engine to be rendered as a Plotly graph
+    '''
     
     # extract data needed for visuals
     # TODO: Below is an example - modify to extract data for your own visuals
@@ -164,6 +189,9 @@ def index():
 # web page that handles user query and displays model results
 @app.route('/go')
 def go():
+    '''
+    method to perform the classification of the entered message 
+    '''
     # save user input in query
     query = request.args.get('query', '') 
 
@@ -180,6 +208,9 @@ def go():
 
 
 def main():
+    '''
+    the main function initiales the Flask framework and starts the web server
+    '''
     #this package needs a download and cannot be handled by an import 
     nltk.download('omw-1.4')
     app.run(host='0.0.0.0', port=3001, debug=True)

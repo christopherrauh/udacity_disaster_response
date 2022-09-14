@@ -38,7 +38,11 @@ def load_data(database_filepath):
 
     extracts the category names and values
 
-    returns the dta load ("X"), the values ("y") and the category names 
+    Returns:
+    
+    X: the data load
+    y: the values 
+    category_names: category names as per the input 
     
     '''
 
@@ -53,8 +57,6 @@ def load_data(database_filepath):
     #  keep only the category columns as the resulting values
     y = df[df.columns[4:]]
     
-    #y = df.drop(['id', 'message', 'genre', 'original'], axis = 1)
-
     category_names = y.columns
 
     return X, y, category_names
@@ -64,7 +66,9 @@ def load_data(database_filepath):
 
 def tokenize(text):
     """
-    inputs:
+    performs the tokinization of an input text
+
+    Inputs:
     messages (strings)
        
     Returns:
@@ -87,7 +91,8 @@ def tokenize(text):
 
 def build_model():
     '''
-    Build a pipe line and 
+    Build a pipeline and adds it to a Gridsearch CV
+
     '''
     pipeline = Pipeline([
         ('vect', CountVectorizer(tokenizer = tokenize)),
@@ -113,6 +118,17 @@ def evaluate_model(model, X_test, Y_test, category_names):
     '''
     print the classification reports.
     the function only prints and doesn't return anything
+
+    Inputs:
+    model: the ML model for the classification
+    X_test: Input test data 
+    Y_test: The given result data. It will be compared against the predicted values
+    category_names: Category names to provide a meaning
+
+    Returns:
+    Nothing, the evaluation report is printed
+
+
     '''
     
     Y_pred = model.predict(X_test)
@@ -130,22 +146,32 @@ def evaluate_model(model, X_test, Y_test, category_names):
     print("***Y pred****", type(Y_pred))
     print(Y_pred)
 
-
-
-    #Y_test.to_csv('y_test.csv')
-    #Y_pred.to_csv('y_pred.csv')
-
     class_report = classification_report(Y_test, Y_pred, target_names=category_names)
     
     print(class_report)
 
 
 def save_model(model, model_filepath):
+    '''
+    saves the trained model as a pickle file to disk
+
+    Inputs:
+    model: the ML model to be saved to a file
+    model_filepath: the filepath to save the model to a pickle file to
+
+    Returns:
+    nothing
+    '''
     with open(model_filepath, 'wb') as file:
         pickle.dump(model, file)
 
 
 def main():
+    '''
+    the main function will be called when invoking the Python script.
+    It will read the command line arguments, prepares the data sets for training and testing,
+    builds the model, trains the model, evaluates the model, and finally saves the model to a pickle file
+    '''
     if len(sys.argv) == 3:
         database_filepath, model_filepath = sys.argv[1:]
         print('Loading data...\n    DATABASE: {}'.format(database_filepath))
