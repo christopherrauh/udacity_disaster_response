@@ -1,6 +1,6 @@
 # Disaster Response Pipeline Project
 
-# Background 
+# Introduction 
 
 This project has two purposes:
 
